@@ -147,13 +147,9 @@ delay(turnFreeze);
   }
   else if (turnLeft == LOW && turnRight == LOW)
   {
-    //delay(25);
-    //if (turnLeft == LOW && turnRight == LOW)
-    //{
       fill_solid(&(ledsL[0]), NUM_LEDS, CRGB::White);
       fill_solid(&(ledsR[0]), NUM_LEDS, CRGB::White);
       FastLED.show();
-    //}
   }
 }
 
@@ -189,10 +185,10 @@ void flash()
 { // funguje pri hociakej farbe, ovladanie iba jasu
   FastLED.setBrightness(0);
   FastLED.show();
-  delay(50);
+  delay(100);
   FastLED.setBrightness(255);
   FastLED.show();
-  delay(50);
+  delay(100);
 }
 
 void pulse()
@@ -420,7 +416,6 @@ void taskWifi(void *TaskParameters_t)
         if (client.available())
         {
           char c = client.read();
-          //  Serial.write(c);
           header += c;
           if (c == '\n')
           {
@@ -492,18 +487,18 @@ void taskWifi(void *TaskParameters_t)
 
               client.println("<body style><h1>ESP32 Web Server</h1>");
 
-              client.println("<p><a href=\"/0/\"><button class=\"button\">Smerovky</button></a></p>");
-              client.println("<p><a href=\"/1/\"><button class=\"button\">Biela</button></a></p>");
-              client.println("<p><a href=\"/2/\"><button class=\"button\">Červená</button></a></p>");
-              client.println("<p><a href=\"/3/\"><button class=\"button\">Zelená</button></a></p>");
-              client.println("<p><a href=\"/4/\"><button class=\"button\">Modrá</button></a></p>");
-              client.println("<p><a href=\"/5/\"><button class=\"button\">Blikanie</button></a></p>");
-              client.println("<p><a href=\"/6/\"><button class=\"button\">Dýchanie</button></a></p>");
+              client.println("<p><a href=\"/0/\"><button class=\"button\">Default</button></a></p>");
+              client.println("<p><a href=\"/1/\"><button class=\"button\">White</button></a></p>");
+              client.println("<p><a href=\"/2/\"><button class=\"button\">Red</button></a></p>");
+              client.println("<p><a href=\"/3/\"><button class=\"button\">Green</button></a></p>");
+              client.println("<p><a href=\"/4/\"><button class=\"button\">Blue</button></a></p>");
+              client.println("<p><a href=\"/5/\"><button class=\"button\">Flashing</button></a></p>");
+              client.println("<p><a href=\"/6/\"><button class=\"button\">Breathing</button></a></p>");
               client.println("<p><a href=\"/7/\"><button class=\"button\">Knight Rider</button></a></p>");
               client.println("<p><a href=\"/8/\"><button class=\"button\">Ambient</button></a></p>");
               client.println("<p><a href=\"/9/\"><button class=\"button\">158</button></a></p>");
-              client.println("<p><a href=\"/10/\"><button class=\"button\">Dúha</button></a></p>");
-              client.println("<p><a href=\"/11/\"><button class=\"button\">VYPNÚŤ</button></a></p>");
+              client.println("<p><a href=\"/10/\"><button class=\"button\">Rainbow</button></a></p>");
+              client.println("<p><a href=\"/11/\"><button class=\"button\">OFF</button></a></p>");
 
               client.println("</body></html>");
               client.println();

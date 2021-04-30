@@ -1,8 +1,3 @@
-/*
- * Detekcia napatia < 5V
- * Nepripajaj > 5V lebo -15€
- * Treba delic napatia/buck converter ak > 5V
- */
 #include <MPU6050_light.h>
 #include "DHT.h"
 #define pinDHT 5
@@ -15,7 +10,7 @@
 #include <Fonts/Dialog20.h>
 #define OLED_RESET -1
 Adafruit_SH1106 display(OLED_RESET);
-DHT mojeDHT(pinDHT, typDHT22);
+DHT DHT(pinDHT, typDHT22);
 MPU6050 mpu(Wire);
 int temp;
 int hum;
@@ -30,12 +25,8 @@ long duration;
 int distance;
 int prevDistance;
 
-
-
-const float referenceVolts = 5.0; // the default reference on a 5-volt board
-const int batteryPin = 0;         // battery is connected to analog pin 0
-
-
+const float referenceVolts = 5.0;
+const int inputPin = 0;
 
 #define opel_width  64
 #define opel_height 64
@@ -48,30 +39,23 @@ unsigned long time_now = 0;
 
 void setup(){
   display.begin(SH1106_SWITCHCAPVCC, 0x3C);
-  mojeDHT.begin();
-  pinMode(LED_BUILTIN, OUTPUT);
+  DHT.begin();
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
   mpu.begin();
   Wire.begin();
-  //mpu.calcOffsets(true,true);
+  //mpu.calcOffsets(true,true); //kalibrácia MPU6050
   display.clearDisplay();
-  //display.drawBitmap(32, 0, bitmap_opel, opel_height, opel_width, WHITE);
-  //display.display();
-  //delay(5000);  
-  //display.clearDisplay();
   display.setFont(&Dialog_plain_15);
   display.setTextColor(WHITE);
 }
 
 void loop(){  
-  val = analogRead(batteryPin); // read the value from the sensor 
-  volts = (val / 1023.0) * referenceVolts; // calculate the ratio
-  
- // Serial.println(volts); // print the value in volts
-  //delay(200);
-  temp = mojeDHT.readTemperature();
-  hum = mojeDHT.readHumidity();
+  val = analogRead(inputPin);
+  volts = (val / 1023.0) * referenceVolts;
+
+  temp = DHT.readTemperature();
+  hum = DHT.readHumidity();
    
   if(volts > 1.5){
     parkSensor();
@@ -86,7 +70,6 @@ void loop(){
     noTone(2);
   }
  }
-  //delay(1000);
   
 }
 void naDisplej(){
@@ -143,9 +126,7 @@ void naDisplej(){
     display.print("%");
     
     display.display();
-    }
-  
-    //delay(3000);  
+    }    
 }
 
 void parkSensor(){
@@ -154,7 +135,6 @@ void parkSensor(){
   
   delayMicroseconds(5);
 
-
   digitalWrite(trigPin, HIGH);
   delayMicroseconds(20);
   digitalWrite(trigPin, LOW);
@@ -162,22 +142,8 @@ void parkSensor(){
   duration = pulseIn(echoPin, HIGH);
   
   distance = (duration*0.034/2)+2;
+  //cas echoPinu na high * rychlost zvuku/2 + offset
   
-        
-  /* sansfont: if(distance > 100 && distance < 450){
-    display.setCursor(40, 35);
-    display.print(distance);
-    display.setCursor(63, 35);
-    display.print("CM"); 
-   } else if(distance < 100 && distance > 25){
-    display.setCursor(40, 35);
-    display.print(distance);    
-    display.setCursor(63, 35);
-    display.print("CM");
-   } else if(distance <= 25){    
-    display.setCursor(45, 35);
-    display.print("STOP");
-   } */
   display.setFont(&Dialog_plain_20);
   if(distance > 100 && distance < 450){
     display.setCursor(30, 38);
@@ -200,7 +166,6 @@ void parkSensor(){
 }
 
 void beep(){
-
   if(distance > 30){
     noTone(2);
   } else if(distance < 31 && distance > 25){
